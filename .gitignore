@@ -31,7 +31,7 @@ ENV/
 *.swp
 *.swo
 *~
-
+.tmp
 # Output and temp directories
 output/
 temp_download/

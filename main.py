@@ -9,10 +9,16 @@ import openpyxl
 import os
 import shutil
 import time
+import json
+import uuid
 from pathlib import Path
 
 
 # ==================== 配置常量 ====================
+
+# 角色名字和作者信息将在main()中通过交互式输入获取
+CHARACTER_NAME = ""
+BY_AUTHOR = ""
 
 # Excel 文件配置
 EXCEL_FILE_PATH = r"D:\devfiles\auto_media_pack_acg\pacenote_view.xlsx"
@@ -257,10 +263,33 @@ def verify_output(output_dir: Path, expected_count: int = 346):
     return actual_count == expected_count
 
 
+def create_info_json(output_dir: Path, character_name: str, by_author: str):
+    """
+    创建语言包元数据文件 info.json
+    """
+    info_data = {
+        "id": str(uuid.uuid4()),
+        "name": character_name,
+        "description": f"AI合成，{by_author}",
+        "gender": "F",
+        "language": "普通话",
+        "homepage": "",
+        "version": "1.0.0"
+    }
+
+    info_path = output_dir / "info.json"
+    with open(info_path, 'w', encoding='utf-8') as f:
+        json.dump(info_data, f, ensure_ascii=False, indent=4)
+
+    print(f"  已创建 info.json: {info_path}")
+
+
 def main():
     """
     主程序入口
     """
+    global CHARACTER_NAME, BY_AUTHOR
+
     print("=" * 60)
     print("自动化角色路书语音包生成器")
     print("=" * 60)
@@ -268,14 +297,29 @@ def main():
     # 交互式输入配置
     print("\n请输入配置信息：")
     localhost_port = input("本地端口号 (例如: 9872): ").strip()
-    output_directory = input("输出目录路径 (例如: D:\\output): ").strip()
+    output_base_directory = input("输出目录路径 (例如: D:\\output): ").strip()
 
-    if not localhost_port or not output_directory:
+    # 交互式输入角色信息
+    print("\n请输入角色信息：")
+    CHARACTER_NAME = input("角色名字 (例如: Elysia（爱莉希雅）): ").strip()
+    BY_AUTHOR = input("作者信息 (例如: 燕戏竹林): ").strip()
+
+    if not localhost_port or not output_base_directory:
         print("错误：端口号和输出目录不能为空")
         return
 
+    if not CHARACTER_NAME:
+        print("错误：角色名字不能为空")
+        return
+
+    if not BY_AUTHOR:
+        print("错误：作者信息不能为空")
+        return
+
     base_url = f"http://localhost:{localhost_port}"
-    output_dir = Path(output_directory)
+
+    # 创建以角色名命名的输出文件夹
+    output_dir = Path(output_base_directory) / CHARACTER_NAME
 
     # 创建输出目录
     os.makedirs(output_dir, exist_ok=True)
@@ -311,6 +355,10 @@ def main():
 
             # 验证结果
             verify_output(output_dir)
+
+            # 创建 info.json 元数据文件
+            print("\n=== 创建语言包元数据文件 ===")
+            create_info_json(output_dir, CHARACTER_NAME, BY_AUTHOR)
 
             print(f"\n处理完成。所有音频文件已保存到: {output_dir}")
 
