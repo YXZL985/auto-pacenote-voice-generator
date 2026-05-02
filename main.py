@@ -269,12 +269,17 @@ def perform_initial_setup(page):
     print(f"  已输入文本: {INITIAL_INPUT_TEXT}")
     time.sleep(0.5)
 
-    # 2.5 上传多个音频文件
-    print("\n步骤 2.5: 上传多个音频文件")
+    # 2.5 上传多个音频文件（如果页面上存在第二个上传按钮）
+    print("\n步骤 2.5: 检查并上传多个音频文件")
     # 上传除第一个外的其他音频文件
     remaining_files = AUDIO_FILES[1:]
     if remaining_files:
-        upload_audio_files(page, SELECTOR_UPLOAD_2, remaining_files)
+        # 检查页面上是否存在第二个上传按钮
+        upload_2_count = page.locator(SELECTOR_UPLOAD_2).count()
+        if upload_2_count > 0:
+            upload_audio_files(page, SELECTOR_UPLOAD_2, remaining_files)
+        else:
+            print("  检测到当前音源模型只需要第一个音频，跳过第二次上传")
 
     # 2.6 调整控件数值
     print("\n步骤 2.6: 调整控件数值")
