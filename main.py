@@ -189,23 +189,32 @@ def process_batch(page, input_texts: list, file_names: list, output_dir: Path):
     for i, (input_text, output_filename) in enumerate(zip(input_texts, file_names)):
         try:
             print(f"[{i+1}/{len(input_texts)}] 正在处理: {output_filename}")
+            print(f"   输入文本: {input_text[:50]}{'...' if len(input_text) > 50 else ''}")
 
-            # Step 1: 在输入控件中输入文本
+            # Step 1: 清空并输入新文本，确保状态干净
+            page.fill(SELECTOR_INPUT_CONTROL, "")
+            time.sleep(0.2)
             page.fill(SELECTOR_INPUT_CONTROL, input_text)
-            time.sleep(0.3)
+            time.sleep(0.5)
+            print(f"   已输入文本，等待浏览器处理...")
 
             # Step 2: 点击生成按钮
             page.click(SELECTOR_GENERATE_BUTTON)
-            print(f"   已点击生成按钮，等待处理...")
+            print(f"   已点击生成按钮，等待语音合成完成...")
 
-            # 等待网络空闲，确保生成完成
+            # 等待网络空闲
             page.wait_for_load_state("networkidle")
-            time.sleep(1)
 
-            # Step 3: 等待下载按钮出现，然后监听下载
-            page.wait_for_selector(SELECTOR_DOWNLOAD_BUTTON, state="visible", timeout=30000)
+            # Step 3: 等待下载按钮变为可用状态（生成完成的信号）
+            # 使用更长的超时时间，因为语音合成可能需要较长时间
+            page.wait_for_selector(SELECTOR_DOWNLOAD_BUTTON, state="visible", timeout=60000)
+            print(f"   下载按钮已可用，语音合成完成")
 
-            with page.expect_download() as download_info:
+            # 额外等待2秒，确保音频文件完全生成并稳定
+            time.sleep(2)
+
+            # Step 4: 点击下载按钮并监听下载
+            with page.expect_download(timeout=30000) as download_info:
                 page.click(SELECTOR_DOWNLOAD_BUTTON)
 
             download = download_info.value
@@ -214,7 +223,11 @@ def process_batch(page, input_texts: list, file_names: list, output_dir: Path):
             downloaded_path = download.path()
             print(f"   下载完成: {downloaded_path}")
 
-            # Step 4: 重命名并转移到输出目录
+            # 验证下载成功
+            if not downloaded_path or not os.path.exists(downloaded_path):
+                raise Exception(f"下载文件不存在: {downloaded_path}")
+
+            # Step 5: 重命名并转移到输出目录
             safe_filename = clean_filename(output_filename)
             # 确保文件名有 .wav 扩展名
             if not safe_filename.endswith('.wav'):
@@ -229,15 +242,20 @@ def process_batch(page, input_texts: list, file_names: list, output_dir: Path):
             shutil.move(str(downloaded_path), str(final_path))
             print(f"   已保存: {final_path}")
 
-            # 短暂等待，避免操作过快
-            time.sleep(0.5)
+            # Step 6: 处理间隔，避免浏览器队列堆积
+            time.sleep(1)
 
         except Exception as e:
-            print(f"   处理失败: {e}")
+            print(f"   处理失败 [{i+1}/{len(input_texts)}]: {e}")
+            print(f"   目标文件名: {output_filename}")
+            print(f"   输入文本: {input_text[:100]}{'...' if len(input_text) > 100 else ''}")
             # 截图保存以便调试
             error_screenshot = f"error_{i+1}_{int(time.time())}.png"
-            page.screenshot(path=error_screenshot)
-            print(f"   已保存错误截图: {error_screenshot}")
+            try:
+                page.screenshot(path=error_screenshot)
+                print(f"   已保存错误截图: {error_screenshot}")
+            except Exception as screenshot_error:
+                print(f"   截图保存失败: {screenshot_error}")
             continue
 
     print(f"\n=== 批量处理完成 ===")
