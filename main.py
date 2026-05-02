@@ -2,6 +2,13 @@
 """
 自动化角色路书语音包生成器
 使用 Playwright 批量生成并下载音频文件
+
+SPDX-License-Identifier: GPL-3.0-or-later
+
+依赖项许可证说明：
+- Playwright: Apache-2.0 License (https://playwright.dev/)
+- openpyxl: MIT License (https://openpyxl.readthedocs.io/)
+- GPT-SoVITS: MIT License (https://github.com/RVC-Boss/GPT-SoVITS)
 """
 
 from playwright.sync_api import sync_playwright
@@ -11,6 +18,7 @@ import shutil
 import time
 import json
 import uuid
+import sys
 from pathlib import Path
 
 
@@ -64,6 +72,99 @@ SKIP_VOICE_GENERATION = [
     "start_stage",
     "system_start_stage"
 ]
+
+# 法律声明确认语句
+LEGAL_CONFIRMATION_TEXT = "我已阅读并同意遵守上述条款"
+LEGAL_NOTICE_FILE = ".legal_notice"
+
+
+# ==================== 法律合规相关函数 ====================
+
+def print_legal_warning():
+    """
+    打印法律警告信息（ASCII艺术框）
+    """
+    warning_text = """
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              重 要 法 律 声 明                                ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║  1. 【声音合法来源】您必须确保使用的参考音频已取得权利人合法授权               ║
+║                                                                              ║
+║  2. 【合规法规】本工具遵守《生成式人工智能服务管理暂行办法》                  ║
+║                                                                              ║
+║  3. 【使用责任】您对本工具生成的内容承担完全法律责任                          ║
+║                                                                              ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║  依据《民法典》第1023条，自然人的声音受人格权保护                             ║
+║  未经授权使用他人声音进行AI合成可能构成侵权，面临法律责任                     ║
+║  参考案例：北京互联网法院"AI声音侵权案"（配音师获赔25万元）                  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+本工具仅供学习和研究使用。详细法律声明请参见 DISCLAIMER.md 文件。
+"""
+    print(warning_text)
+
+
+def check_legal_confirmation():
+    """
+    检查用户是否已确认法律条款
+    返回 True 表示已确认，False 表示未确认
+    """
+    # 检查环境变量，用于自动化场景跳过确认
+    if os.environ.get("AUTO_PACENOTE_SKIP_LEGAL_CHECK") == "1":
+        print("[合规模式] 检测到环境变量 AUTO_PACENOTE_SKIP_LEGAL_CHECK=1，跳过法律确认")
+        return True
+
+    print_legal_warning()
+    print("\n" + "=" * 60)
+    print("法律条款确认")
+    print("=" * 60)
+    print("\n请仔细阅读上述法律声明。")
+    print(f"\n如果您已阅读并同意遵守上述条款，请输入：")
+    print(f"\n  【{LEGAL_CONFIRMATION_TEXT}】")
+    print("\n如果您不同意上述条款，请直接按 Ctrl+C 退出程序。")
+    print("-" * 60)
+
+    try:
+        user_input = input("\n请输入确认语句: ").strip()
+
+        if user_input == LEGAL_CONFIRMATION_TEXT:
+            print("\n✓ 确认成功，程序将继续运行。")
+            print("-" * 60)
+            return True
+        else:
+            print("\n✗ 确认失败：输入的语句不匹配。")
+            print(f"\n您需要准确输入：{LEGAL_CONFIRMATION_TEXT}")
+            print("\n程序将退出。如需使用本工具，请重新运行并正确输入确认语句。")
+            print("=" * 60)
+            return False
+    except KeyboardInterrupt:
+        print("\n\n用户取消操作，程序退出。")
+        return False
+    except EOFError:
+        # 非交互式环境（如管道输入）
+        print("\n\n[警告] 检测到非交互式环境，无法获取用户确认。")
+        print("如需在非交互式环境中运行，请设置环境变量：")
+        print("  export AUTO_PACENOTE_SKIP_LEGAL_CHECK=1")
+        print("\n程序将退出。")
+        return False
+
+
+def create_legal_notice_file(output_dir: Path):
+    """
+    创建合规标记文件 .legal_notice
+    该文件表示用户已阅读并同意遵守法律条款
+    """
+    try:
+        notice_path = output_dir / LEGAL_NOTICE_FILE
+        # 创建空文件
+        notice_path.touch(exist_ok=True)
+        print(f"  已创建合规标记文件: {notice_path}")
+        return True
+    except Exception as e:
+        print(f"  [警告] 创建合规标记文件失败: {e}")
+        return False
 
 
 # ==================== 辅助函数 ====================
@@ -332,6 +433,10 @@ def main():
     print("自动化角色路书语音包生成器")
     print("=" * 60)
 
+    # 法律合规检查
+    if not check_legal_confirmation():
+        sys.exit(1)
+
     # 交互式输入配置
     print("\n请输入配置信息：")
     localhost_port = input("本地端口号 (例如: 9872): ").strip()
@@ -362,6 +467,10 @@ def main():
     # 创建输出目录
     os.makedirs(output_dir, exist_ok=True)
     print(f"\n输出目录: {output_dir}")
+
+    # 创建合规标记文件
+    print("\n=== 创建合规标记文件 ===")
+    create_legal_notice_file(output_dir)
 
     # 读取 Excel 数据
     try:

@@ -1,5 +1,7 @@
 <div align="center">
 
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+
 # 🎙️ 自动化角色路书语音包生成器
 
 [![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/)
@@ -12,6 +14,33 @@
 🎮 适用于：[ZTMZ路书工具](https://gitee.com/ztmz/ztmz_pacenote)
 
 </div>
+
+---
+
+## ⚠️ 法律合规警告
+
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              重 要 法 律 声 明                                ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║  1. 【声音合法来源】您必须确保使用的参考音频已取得权利人合法授权               ║
+║                                                                              ║
+║  2. 【合规法规】本工具遵守《生成式人工智能服务管理暂行办法》                  ║
+║                                                                              ║
+║  3. 【使用责任】您对本工具生成的内容承担完全法律责任                          ║
+║                                                                              ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║  依据《民法典》第1023条，自然人的声音受人格权保护                             ║
+║  未经授权使用他人声音进行AI合成可能构成侵权，面临法律责任                     ║
+║  参考案例：北京互联网法院"AI声音侵权案"（配音师获赔25万元）                  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+```
+
+> **使用本工具前，请务必完整阅读 [DISCLAIMER.md](DISCLAIMER.md)。**
+>
+> 首次运行本工具时，您需要手动输入"我已阅读并同意遵守上述条款"方可继续使用。
+> 使用本工具即表示您已充分理解并同意遵守所有法律声明条款。
 
 ---
 
@@ -86,6 +115,8 @@ python main.py
 3. **角色名字**：语音包角色名称（例如：`Elysia（爱莉希雅）`）
 4. **作者信息**：语音包作者（例如：`by_燕戏竹林`）
 
+**注意**：首次运行时，程序会显示法律声明并要求您输入确认语句。
+
 ### 4. Excel 文件格式
 
 Excel 文件需包含以下列：
@@ -114,6 +145,7 @@ Excel 文件需包含以下列：
    - 按角色名创建输出目录
    - 保存所有音频文件
    - 生成 info.json 元数据文件
+   - 创建 `.legal_notice` 合规标记文件
 
 ## 特殊文件名处理
 
@@ -129,6 +161,7 @@ Excel 文件需包含以下列：
 ```
 输出目录/
 └── 角色名/
+    ├── .legal_notice      # 合规标记文件（空文件，表示已同意条款）
     ├── info.json
     ├── audio1.wav
     ├── audio2.wav
@@ -144,28 +177,31 @@ Excel 文件需包含以下列：
 2. **网络连接**：确保 GPT-SoVITS WebUI 已启动并可访问
 3. **浏览器窗口**：程序以非无头模式运行，便于调试和观察进度
 4. **超时设置**：语音合成长时间未完成会自动跳过并记录错误
+5. **法律合规**：请确保使用的参考音频已取得合法授权，详见 [DISCLAIMER.md](DISCLAIMER.md)
 
 ## 依赖项目
 
-- [GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) - 语音合成模型
-- [Playwright](https://playwright.dev/) - 用于浏览器自动化操作
-- [openpyxl](https://openpyxl.readthedocs.io/en/stable/) - 用于读取 Excel 文件
+- [GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) - 语音合成模型（MIT License）
+- [Playwright](https://playwright.dev/) - 用于浏览器自动化操作（Apache-2.0 License）
+- [openpyxl](https://openpyxl.readthedocs.io/en/stable/) - 用于读取 Excel 文件（MIT License）
 - [ZTMZ路书工具](https://gitee.com/ztmz/ztmz_pacenote) - 语音包的应用场景
 
 ## 鸣谢
 
 感谢以下开源项目和工具的支持：
 
-| 项目 | 说明 |
-|------|------|
-| [GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) | 强大的少样本语音转换与语音合成工具 |
-| [Playwright](https://playwright.dev/) | 微软出品的现代 Web 自动化测试框架 |
-| [openpyxl](https://openpyxl.readthedocs.io/en/stable/) | Python 读写 Excel 文件的库 |
-| [ZTMZ路书工具](https://gitee.com/ztmz/ztmz_pacenote) | 优秀的赛车游戏路书语音工具 |
+| 项目 | 说明 | 许可证 |
+|------|------|--------|
+| [GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) | 强大的少样本语音转换与语音合成工具 | MIT |
+| [Playwright](https://playwright.dev/) | 微软出品的现代 Web 自动化测试框架 | Apache-2.0 |
+| [openpyxl](https://openpyxl.readthedocs.io/en/stable/) | Python 读写 Excel 文件的库 | MIT |
+| [ZTMZ路书工具](https://gitee.com/ztmz/ztmz_pacenote) | 优秀的赛车游戏路书语音工具 | - |
 
 ## ⚠️ 免责声明
 
 > **本工具仅供学习和研究使用。使用本工具即表示您同意以下条款：**
+>
+> 详细条款请参见 [DISCLAIMER.md](DISCLAIMER.md)。以下为简要说明：
 
 1. **知识产权**：用户使用本工具生成的语音内容，应确保拥有原始音频素材的合法使用权。禁止未经授权使用他人受版权保护的声音进行训练或生成内容。
 
@@ -183,8 +219,17 @@ Excel 文件需包含以下列：
 
 5. **第三方服务**：本工具依赖 GPT-SoVITS 等第三方开源项目，用户应同时遵守这些项目的使用条款和许可协议。
 
+## 法律资源
+
+- [DISCLAIMER.md](DISCLAIMER.md) - 完整法律声明与合规指南
+- [docs/legal_guidance.md](docs/legal_guidance.md) - 详细法律指导与案例分析
+
 ## License
 
 本项目采用 [GPLv3](LICENSE) 开源许可证。
 
 > **注意**：GPLv3 许可证仅适用于本工具的代码本身，不适用于用户使用本工具生成的内容。用户对其生成的内容负有完全责任。
+
+```
+SPDX-License-Identifier: GPL-3.0-or-later
+```
