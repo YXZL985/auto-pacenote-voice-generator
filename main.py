@@ -57,6 +57,14 @@ DROPDOWN_OPTION_2 = "SoVITS_weights_v2ProPlus/Fugue_e8_s384.pth"
 # 控件目标值
 CONTROL_TARGET_VALUE = "37"
 
+# 需要跳过语音生成、改为创建目录的特殊文件名
+SKIP_VOICE_GENERATION = [
+    "end_stage",
+    "system_end_stage",
+    "start_stage",
+    "system_start_stage"
+]
+
 
 # ==================== 辅助函数 ====================
 
@@ -190,6 +198,14 @@ def process_batch(page, input_texts: list, file_names: list, output_dir: Path):
         try:
             print(f"[{i+1}/{len(input_texts)}] 正在处理: {output_filename}")
             print(f"   输入文本: {input_text[:50]}{'...' if len(input_text) > 50 else ''}")
+
+            # 检查是否需要跳过语音生成
+            if output_filename in SKIP_VOICE_GENERATION:
+                # 创建目录而不是生成语音
+                dir_path = output_dir / output_filename
+                os.makedirs(dir_path, exist_ok=True)
+                print(f"   跳过语音生成，创建目录: {dir_path}")
+                continue
 
             # Step 1: 清空并输入新文本，确保状态干净
             page.fill(SELECTOR_INPUT_CONTROL, "")
