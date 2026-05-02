@@ -199,13 +199,13 @@ def process_batch(page, input_texts: list, file_names: list, output_dir: Path):
             print(f"[{i+1}/{len(input_texts)}] 正在处理: {output_filename}")
             print(f"   输入文本: {input_text[:50]}{'...' if len(input_text) > 50 else ''}")
 
-            # 检查是否需要跳过语音生成
-            if output_filename in SKIP_VOICE_GENERATION:
-                # 创建目录而不是生成语音
+            # 检查是否需要特殊处理（创建子目录并将音频放入其中）
+            is_special = output_filename in SKIP_VOICE_GENERATION
+            if is_special:
+                # 创建子目录
                 dir_path = output_dir / output_filename
                 os.makedirs(dir_path, exist_ok=True)
-                print(f"   跳过语音生成，创建目录: {dir_path}")
-                continue
+                print(f"   特殊处理：创建子目录: {dir_path}")
 
             # Step 1: 清空并输入新文本，确保状态干净
             page.fill(SELECTOR_INPUT_CONTROL, "")
@@ -249,7 +249,11 @@ def process_batch(page, input_texts: list, file_names: list, output_dir: Path):
             if not safe_filename.endswith('.wav'):
                 safe_filename += '.wav'
 
-            final_path = output_dir / safe_filename
+            # 根据是否是特殊处理决定保存路径
+            if is_special:
+                final_path = output_dir / output_filename / safe_filename
+            else:
+                final_path = output_dir / safe_filename
 
             # 如果文件已存在，先删除
             if final_path.exists():
