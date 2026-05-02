@@ -274,9 +274,15 @@ def perform_initial_setup(page):
     # 上传除第一个外的其他音频文件
     remaining_files = AUDIO_FILES[1:]
     if remaining_files:
-        # 检查页面上是否存在第二个上传按钮
-        upload_2_count = page.locator(SELECTOR_UPLOAD_2).count()
-        if upload_2_count > 0:
+        # 检查页面上是否存在第二个上传按钮（使用 is_visible 检测元素是否可见）
+        try:
+            # 先等待一小段时间看元素是否出现
+            page.wait_for_selector(SELECTOR_UPLOAD_2, state="visible", timeout=2000)
+            upload_2_exists = True
+        except Exception:
+            upload_2_exists = False
+        
+        if upload_2_exists:
             upload_audio_files(page, SELECTOR_UPLOAD_2, remaining_files)
         else:
             print("  检测到当前音源模型只需要第一个音频，跳过第二次上传")
