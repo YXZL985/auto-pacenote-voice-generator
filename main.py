@@ -20,11 +20,11 @@ from pathlib import Path
 CHARACTER_NAME = ""
 BY_AUTHOR = ""
 
-# Excel 文件配置
+# Excel 文件配置，这里使用绝对路径，确保在不同系统上都能正常工作
 EXCEL_FILE_PATH = r"D:\devfiles\auto_media_pack_acg\pacenote_view.xlsx"
 SHEET_NAME = "pacenote_view_202412300958"
 
-# 音频文件路径列表
+# 音频文件路径列表，可自行修改，不过要注意第一个音频一定不要超过10s，否则会导致生成失败
 AUDIO_FILES = [
     r"E:\intomedia\fugue\c41d585d86093789287d57fd257d0080_5386240350757193136.wav",
     r"E:\intomedia\fugue\7d813ee0ec4ef7377392344d0d4bc4d5_5409923193007825143.wav",
@@ -33,10 +33,10 @@ AUDIO_FILES = [
     r"E:\intomedia\fugue\fb5bce40d8c1bb3bf7770020844c45da_1091382152274400042.wav",
 ]
 
-# 第一个音频文件（单独上传）
+# 第一个音频文件（单独上传），这里上传主要参考的音频文件
 FIRST_AUDIO_FILE = AUDIO_FILES[0]
 
-# 初始文本输入内容
+# 这段文本是参考音频文件的文本内容，可自行修改
 INITIAL_INPUT_TEXT = "旅途可还顺利？若是得闲，我这又来了一批好茶，等着列位恩公登门品鉴。"
 
 # CSS 选择器
@@ -50,11 +50,11 @@ SELECTOR_INPUT_CONTROL = "#component-28 > label > textarea"
 SELECTOR_GENERATE_BUTTON = "#component-47"
 SELECTOR_DOWNLOAD_BUTTON = "#component-48 > div.icon-buttons.svelte-rvdo70 > a > button"
 
-# 下拉选项文本
+# 下拉选项文本，这一步选择用户自己训练出来的语音模型
 DROPDOWN_OPTION_1 = "GPT_weights_v2ProPlus/Fugue-e12.ckpt"
 DROPDOWN_OPTION_2 = "SoVITS_weights_v2ProPlus/Fugue_e8_s384.pth"
 
-# 控件目标值
+# 控件目标值，需要在生成前自己试验以决定top_k的值是否合适
 CONTROL_TARGET_VALUE = "37"
 
 # 需要跳过语音生成、改为创建目录的特殊文件名
