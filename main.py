@@ -28,24 +28,20 @@ from pathlib import Path
 CHARACTER_NAME = ""
 BY_AUTHOR = ""
 
-# Excel 文件配置，这里使用绝对路径，确保在不同系统上都能正常工作
-EXCEL_FILE_PATH = r"D:\devfiles\auto_media_pack_acg\pacenote_view.xlsx"
+# Excel 文件配置，这里建议使用绝对路径，确保在不同系统上都能正常工作
+EXCEL_FILE_PATH = r"path\to\pacenote_view.xlsx"
 SHEET_NAME = "pacenote_view_202412300958"
 
-# 音频文件路径列表，可自行修改，不过要注意第一个音频一定不要超过10s，否则会导致生成失败
+# 音频文件路径列表，可自行修改，引号内填写音频文件的路径，建立数量在4到7个左右，不过要注意第一个音频一定不要超过10s，否则会导致生成失败
 AUDIO_FILES = [
-    r"E:\intomedia\fugue\c41d585d86093789287d57fd257d0080_5386240350757193136.wav",
-    r"E:\intomedia\fugue\7d813ee0ec4ef7377392344d0d4bc4d5_5409923193007825143.wav",
-    r"E:\intomedia\fugue\cb1d0458aadd7b2ec6a4059c11f64d22_2930146964451322386.wav",
-    r"E:\intomedia\fugue\d3d7b0d0aca94c83dd0388d38aa2c77c_2965525889137205769.wav",
-    r"E:\intomedia\fugue\fb5bce40d8c1bb3bf7770020844c45da_1091382152274400042.wav",
+    r"",r"",r"",r"",
 ]
 
 # 第一个音频文件（单独上传），这里上传主要参考的音频文件
 FIRST_AUDIO_FILE = AUDIO_FILES[0]
 
 # 这段文本是参考音频文件的文本内容，可自行修改
-INITIAL_INPUT_TEXT = "旅途可还顺利？若是得闲，我这又来了一批好茶，等着列位恩公登门品鉴。"
+INITIAL_INPUT_TEXT = ""
 
 # CSS 选择器
 SELECTOR_DROPDOWN_1 = "#component-5 > div.svelte-vomtxz.container > div > div.wrap-inner.svelte-vomtxz"
@@ -58,12 +54,12 @@ SELECTOR_INPUT_CONTROL = "#component-28 > label > textarea"
 SELECTOR_GENERATE_BUTTON = "#component-47"
 SELECTOR_DOWNLOAD_BUTTON = "#component-48 > div.icon-buttons.svelte-rvdo70 > a > button"
 
-# 下拉选项文本，这一步选择用户自己训练出来的语音模型
-DROPDOWN_OPTION_1 = "GPT_weights_v2ProPlus/Fugue-e12.ckpt"
-DROPDOWN_OPTION_2 = "SoVITS_weights_v2ProPlus/Fugue_e8_s384.pth"
+# 下拉选项文本，这一步选择用户自己训练出来的语音模型（也就是`GPT模型列表`和`SoVITS模型列表`的值）
+DROPDOWN_OPTION_1 = ""
+DROPDOWN_OPTION_2 = ""
 
 # 控件目标值，需要在生成前自己试验以决定top_k的值是否合适
-CONTROL_TARGET_VALUE = "37"
+CONTROL_TARGET_VALUE = ""
 
 # 需要跳过语音生成、改为创建目录的特殊文件名
 SKIP_VOICE_GENERATION = [
@@ -98,7 +94,7 @@ def print_legal_warning():
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║  依据《民法典》第1023条，自然人的声音受人格权保护                             ║
 ║  未经授权使用他人声音进行AI合成可能构成侵权，面临法律责任                     ║
-║  参考案例：北京互联网法院"AI声音侵权案"（配音师获赔25万元）                  ║
+║  参考案例：北京互联网法院（2023）京0491民初12142号民事判决书（AI声音侵权案）                 ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 本工具仅供学习和研究使用。详细法律声明请参见 DISCLAIMER.md 文件。
